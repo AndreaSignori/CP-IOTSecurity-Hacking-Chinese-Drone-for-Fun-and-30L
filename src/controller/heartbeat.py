@@ -22,7 +22,10 @@ class Heartbeat:
         """
 
         while True:
-            print("Sending heartbeat...")
-            self._socket.sendto(self._msg, (self._dst_ip, self._dst_port))
+            try:
+                print("Sending heartbeat...")
+                self._socket.sendto(self._msg, (self._dst_ip, self._dst_port))
 
-            time.sleep(self._interval)
+                time.sleep(self._interval)
+            except OSError:
+                break
