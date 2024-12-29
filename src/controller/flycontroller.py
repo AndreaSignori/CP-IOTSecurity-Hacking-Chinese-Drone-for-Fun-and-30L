@@ -1,5 +1,6 @@
 import socket
 import threading
+import time
 
 from src.controller.heartbeat import Heartbeat
 
@@ -60,14 +61,19 @@ class FlyController:
         else:
             return -1
 
-    def receive(self) -> bytes:
+    def receive(self, wait: int = 0) -> bytes|None:
         """
         Receive the data from the target drone
+
+        :param wait: define a time window to wait for reciving data from the drone, in second
+        :return: the data received from the target drone
         """
+        data = None
 
-        # TODO: valutare meccanismo di timeout
-        data, _ = self._udp_socket.recvfrom(self._buffer_size)
-
-        #TODO: analisi dati ricevuti
-        #print(data)
-        return data
+        try:
+            self._udp_socket.settimeout(wait)
+            data, _ = self._udp_socket.recvfrom(self._buffer_size)
+        except socket.timeout:
+            pass
+        finally:
+            return data
