@@ -3,17 +3,26 @@ import random
 
 ''' CREATING ARRAY (bArr2) '''
 
+# Define arrays elements
+controlByte1 = random.randint(0, 255)
+controlByte2 = random.randint(0, 255)
+controlAccelerator = random.randint(0, 255)
+controlTurn = random.randint(0, 255)
+i9 = random.randint(0, 15)
+i10 = random.randint(0, 15)
+XORControl = i9 ^ (((controlByte1 ^ controlByte2) ^ controlAccelerator) ^ controlTurn) ^ (i10 & 255)
+
 # Define the array with random values for specific indices
 bArr2 = [
     3,
     102,
     20,
-    random.randint(0, 255),     # Third value
-    random.randint(0, 255),     # Fourth value
-    random.randint(0, 255),     # Fifth value
-    random.randint(0, 255),     # Sixth value
-    random.randint(0, 15),      # Seventh value
-    random.randint(0, 15),      # Eighth value
+    controlByte1,
+    controlByte2,
+    controlAccelerator,
+    controlTurn,
+    i9,
+    i10,
     0,
     0,
     0,
@@ -24,7 +33,7 @@ bArr2 = [
     0,
     0,
     0,
-    random.randint(0, 255),     # Nineteenth value
+    XORControl,
     -103
 ]
 
