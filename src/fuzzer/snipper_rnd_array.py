@@ -38,10 +38,9 @@ bArr2 = [
 ]
 
 # Turn the list into a list of bytes
-byte_list = bytearray((value % 256) for value in bArr2)
-'''
-print(byte_list)
-'''
+byte_list = bytearray([(value % 256) for value in bArr2])
+#print(byte_list)
+
 
 # Convert each byte into its binary representation and print as 0s and 1s
 binary_representation = ' '.join(format(byte, '08b') for byte in byte_list)
