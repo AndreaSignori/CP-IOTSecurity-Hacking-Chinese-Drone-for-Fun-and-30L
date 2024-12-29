@@ -7,7 +7,7 @@ localPort = 20001
 
 bufferSize = 1024
 
-msgFromServer = "Hello UDP Client"
+msgFromServer = "Hi!"
 
 bytesToSend = str.encode(msgFromServer)
 
@@ -23,7 +23,7 @@ print("UDP server up and listening")
 
 # Listen for incoming datagrams
 
-while (True):
+while True:
     bytesAddressPair = UDPServerSocket.recvfrom(bufferSize)
 
     message = bytesAddressPair[0]
@@ -39,4 +39,5 @@ while (True):
 
     # Sending a reply to client
 
+    #time.sleep(2)
     UDPServerSocket.sendto(bytesToSend, address)
