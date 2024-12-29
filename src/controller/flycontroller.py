@@ -61,7 +61,7 @@ class FlyController:
         else:
             return -1
 
-    def receive(self, wait: int = 0) -> bytes|None:
+    def receive(self, wait: float = 0) -> bytes|None:
         """
         Receive the data from the target drone
 
