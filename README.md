@@ -25,7 +25,7 @@ This folder includes:
 To get started with this repository:
 1. Clone the repository:  
    ```bash
-   git clone https://github.com/yourusername/your-repo-name.git
+   git clone [https://github.com/AndreaSignori/CP-IOTSecurity-Hacking-Chinese-Drone-for-Fun-and-30L/blob/main/README.md]
    ```
 2. Navigate to the respective folders to explore the code, packet captures, or documentation.
 
