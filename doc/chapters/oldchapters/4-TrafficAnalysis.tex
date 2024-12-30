@@ -1,0 +1,16 @@
+\section{Traffic analysis}
+Before implementing our RC we have to understand how drone and RC communicate with each other. As we said before the drone when it is power on creates an access point, so we sniff the traffic. To do this we use \textit{airport} because to the access point allow one connection at a time and it is not editable.
+\textit{Airport} is a tool available on MacOS born to manage and configure the AirPort devices, moreover allow us to put the NIC in monitor mode so we are able to eavesdrop the entire wi-fi channel.The command to this is the following:
+\begin{center}
+    \begin{lstlisting}[language=bash]
+        sudo airport en0 sniff 1
+    \end{lstlisting}
+\end{center}
+where \textit{en0} is the network interface, \textit{sniff} attribute allow us to sniff a given channel, in our case is the channel \textit{1}.
+From a first look we notice that the network has only two addresses and are 192.168.1.1 and 192.168.1.100 where, respectively the drone and the RC. The drone makes available two services: an arbitrary UDP port which change every time we connected to it and is used to send the cam frame (but we don't investigate further because is out of scope).On the other hand, there is the 7099/UPD port that deals on send commands.
+Over the last port mentioned before travels three different packets:
+\begin{enumerate}
+    \item the command sends to the drone (further details in the next section);
+    \item heartbeat from RC to drone (further details in the next section);
+    \item heartbeat from drone to RC and it is the following 11 bytes sequence: \textit{6502372c2f4f0000000000}. Further investigation wasn't possible due to the fact we don't have the firmware, moreover is out of scope.
+\end{enumerate}

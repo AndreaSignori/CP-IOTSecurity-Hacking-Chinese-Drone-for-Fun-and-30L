@@ -1,0 +1,90 @@
+\section{Fuzzer}
+The Fuzzer definition starts with its packet definition: the parameters \textit{"controlByte1", "controlByte2", "controlAccelerator", "controlTurn"} are set in a range between 0 and 255 randomly generated, while i9 and i10 are set in a range between 0 and 15 also randomly generated.\\
+Every part of the function has been done in Python, so to set the first 4 parameters, we used the function:
+\begin{lstlisting}[language=Python, basicstyle=\small, caption=Parameters generation]
+    random.randint(0, 255)
+\end{lstlisting}
+for i9 and i10 we simply changed the range:
+\begin{lstlisting}[language=Python, basicstyle=\small, caption=Parameters generation]
+    random.randint(0, 15)
+\end{lstlisting}
+The \textit{"XORControl"} parameter is computed as defined in Section \ref{sec:5}, while the last value of the array is computed in a \textbf{2 complement} as follows:
+\begin{lstlisting}[language=Python, basicstyle=\small, caption=Parameters generation]
+    # This turn the list into a list of bytes
+    byte_list = 
+    bytearray((value % 256) for value in bArr)
+\end{lstlisting}
+This line of code not only encodes the list values in bytes, but also automatically implements the \textbf{2 complement} technique.
+
+Our fuzzer works as follows:
+\begin{enumerate}
+    \item creates a random input as describe above;
+    \item sends the input to the drone;
+    \item wait some kind of response from the drone. In our case we have available only the drone's heartbeat, then if we get an heartbeat in less than 0.2 second, the drone is online, otherwise it went offline for some reason(far from the RC, empty battery or the drone was turn off mid-air for some reason);
+    \item log the inputs and the response of the drone.
+\end{enumerate}
+The Listing \ref{lst:fuzzer} shows the implementation of the fuzzer used.
+The amount of pause after every command and the timeout for the drone's heartbeat reception are fine tuned according to the traffic analysis.
+
+\subsection*{Experiments \& Results}
+All the experiment was taken in a controlled environment holding up the drone and monitoring the traffic generated with a sniffer.
+The main problems that we faced during the experimentation were the battery, were empty after more or less 40/50 minutes of testing, and the lack of feedback from the drone, the only ones available were the drone's heartbeat and the human eye. Thanks to this step, we are able to make more or less 47000 tests with one charge.
+  
+\begin{lstlisting}[language=Python, basicstyle=\tiny, label={lst:fuzzer}, caption=Fuzzer]
+MAX_ITERATIONS = 46500
+controller = FlyController(dst_ip='192.168.1.1', 
+                           dst_port=7099, 
+                           heartbeat_interval=1, 
+                           heartbeat_msg=bytearray([1, 1]), 
+                           buffer_size=20)
+
+# code omitted...
+
+is_power_on = controller.start()
+fuzzer_log_path = "./fuzzer.log"
+iter_num = 0
+
+# drone take-off
+for _ in range(10):
+    controller.send(takeoff_cmd)
+
+while is_power_on or iter_num < MAX_ITERATIONS:
+    fuzz_command = generate_rnd_command()
+
+    if not fuzz_command.hex() == takeoff_cmd.hex():
+         try:
+            controller.send(fuzz_command)
+            time.sleep(0.1)
+
+            drone_heartbeat = controller.receive(wait=0.2)
+
+            with open(fuzzer_log_path, "a") as f:
+                str = f"{fuzz_command.hex()}\t"
+
+                if drone_heartbeat is None:
+                    is_power_on = False 
+                    str += "FAILED\n"
+                 else:
+                    str += "OK\n"
+
+                f.write(str)
+
+            iter_num += 1
+        except OSError:
+            print("Drone is unreachable!")
+            controller.stop()
+            break
+
+# drone landing
+try:
+    for _ in range(10):
+        controller.send(landing_cmd)
+except OSError:
+    pass
+finally:
+    controller.stop()
+\end{lstlisting}
+
+Form the experiments we get some input for which we didn't get the heartbeat in time, however the drone still on-line and reachable (verified with sniffer). These errors occurred mainly during the phase where we fine tuned the several timeout, then these error are strictly related to a bad choice of the timeout values.
+
+At the end of the tests we didn't get anything remarkable, except for some weird behaviors of the rotors but we couldn't see the outcome of these behaviors due to how we set up the environment. The absence of some other remarkable observations may be cause by the fact we don't fuzz the entire command but only the portions for which we were able to get information about. For instance may modify the series of zeros (between 10th and 19th bytes) we may get some interesting results. By the fact we don't get any information about this bytes in the code of the app (hardcoded) we prefer to keep them. 

@@ -1,0 +1,75 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% v1.0.0
+% lab-report-template
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[twocolumn]{article}
+
+% Include packages and document structure
+\include{style}
+\usepackage{listings}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%               HEADER
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title{
+    \vspace{-1cm}
+    \includegraphics[height=2.5cm]{imgs/logo-math.png}
+    \hfill
+    \includegraphics[height=2.5cm]{imgs/logo-unipd.pdf}
+    \hfill
+    \includegraphics[height=2.5cm]{imgs/logo-cybersec.png}
+    \par
+    \vspace{1cm}
+    \textbf{Report for the Course on Cyber-Physical Systems and IoT Security}\\
+    Hacking Chinese Drone for Fun and 30L
+}
+
+\author{
+    Authors\\
+    {Andrea Signori - 2131195} \\
+    {Denis Gasparollo - 2104298} \\
+    {Riccardo Felisi - 2126813} 
+}
+
+\date{17/12/2024}
+
+
+% Document begin
+\begin{document}
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                 BODY
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Objectives
+\input{chapters/1-Objectives}
+
+%% Setup description
+\input{chapters/2-SetupDescription}
+
+%% Results
+\input{chapters/3-WhereToStart}
+
+%% Traffic Analysis
+\input{chapters/4-TrafficAnalysis}
+
+%% App Reverse Engineering
+\input{chapters/5-AppReverseEngineering}
+
+%% Python controller
+\input{chapters/6-PythonController}
+
+%%Fuzzer
+\input{chapters/7-Fuzzer}
+
+%% Conclusions
+\input{chapters/8-Conclusions}
+
+%% Example
+\clearpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%             BIBLIOGRAPHY
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\end{document}

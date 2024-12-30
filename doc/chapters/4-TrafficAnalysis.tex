@@ -1,0 +1,42 @@
+\section{Traffic analysis}
+Before implementing our RC, we needed to understand how the drone and RC communicate with each other. As previously mentioned, when powered on, the drone creates an open Wi-Fi access point. To analyze this communication, we sniffed the network traffic. For this, we used Airport, a \textit{MacOS} tool originally designed to manage and configure \textit{Airport} devices. \textit{Airport} allows us to put the network interface card (NIC) into monitor mode, enabling us to eavesdrop on the entire Wi-Fi channel.
+
+The command to start sniffing is:
+\begin{center}
+    \begin{lstlisting}[language=bash]
+        sudo airport en0 sniff 1
+    \end{lstlisting}
+\end{center}
+
+Here, \textit{en0} refers to the network interface, and the \textit{sniff} attribute enables packet sniffing on the specified channel, which in our case is channel \textit{1}.
+
+\subsection*{Observations from Sniffing}
+
+From an initial analysis of the captured traffic, we observed the following:
+\begin{description}
+  \item[$\bullet$] The network only has two IP addresses:
+  \begin{description}
+    \item[$\bullet$ 192.168.1.1]  drone.
+    \item[$\bullet$ 192.168.1.100]  RC.
+  \end{description}
+  \item[$\bullet$] The drone provides two services:
+  \begin{enumerate}
+    \item \textbf{An arbitrary UDP port} which changes with each connection and is used to send camera frames (not within the scope of this investigation).
+    \item \textbf{UDP port 7099} which is used for command transmissions.
+  \end{enumerate}
+\end{description}
+On port \textbf{7099}, we identified two types of packets based on their lengths and content:%%three types of packets based on their lengths and content:
+\begin{enumerate}
+  \item \textbf{2-Byte Packets:} These packets are always identical and composed of 01 01. They are sent at regular intervals of 1 second.
+  %% \item \textbf{4-Byte Packets:} These packets appear irregularly, without a fixed pattern. Questo messaggio viaggia sulla porta 8800
+  \item \textbf{21-Byte Packets:} These are exchanged multiple times per second (typically 4–5 times) and exhibit a repeating structure with only a few bytes changing between transmissions.
+\end{enumerate}
+Additionally, we observed another type of packet, the 11-byte sequence \textit{6502372c2f4f0000000000}, which appears to be a heartbeat sent from the drone to the RC. Further investigation of this packet was limited, as it would require access to the drone's firmware, which is outside the scope of this project.
+
+\subsection*{Hypotheses and Analysis}
+Upon analyzing the frequency and structure of the captured packets, we hypothesized the following:
+\begin{description}
+  \item[$\bullet$]  The 2-Byte packets are Heartbeat packets sent by the RC to maintain the connection with the drone.
+  \item[$\bullet$]  The 21-Byte packets likely encode command data for drone operations, as their structure and frequency correlate with drone commands. During test flights, where only takeoff and landing commands were executed, the 21-Byte packets repeated cyclically, suggesting they handle command transmission.
+\end{description}
+In the next sections, we will delve into the detailed analysis of these packets, the formulas derived from their patterns, and how we used these insights to reconstruct the RC's functionality and further investigate the drone's communication protocols.

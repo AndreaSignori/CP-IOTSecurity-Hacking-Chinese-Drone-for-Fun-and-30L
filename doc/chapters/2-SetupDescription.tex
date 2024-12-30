@@ -1,0 +1,29 @@
+\section{Setup description}
+To perform our experiment, we had to reconstruct the remote controller (hereafter referred to as RC for simplicity). The goal was to emulate the RC's functionality and establish communication with the drone to analyze and manipulate its interactions.
+
+For this implementation, we utilized Python, relying solely on built-in packages such as socket, time, and threading. These libraries provided the necessary tools to create network sockets, manage timing, and handle concurrency effectively. Additionally, we leveraged tools such as Wireshark and Airport to capture and analyze the network traffic and packets exchanged between the drone and its original RC. This analysis was instrumental in reverse-engineering the communication protocols and understanding the data structures used in their interactions.
+
+Further details about the reverse-engineering process, packet analysis, and the custom implementation of the RC are provided in the subsequent sections. For full access to the code and resources used in this project, refer to our GitHub repository: https://AndreaSignori/CP-IOTSecurity-Hacking-Chinese-Drone-for-Fun-and-30L.
+
+\begin{figure}[h]
+    \begin{minipage}{.48\textwidth}
+        \captionof{table}{Programs}
+        \label{tab:programs_used}
+        \scalebox{1}{
+            \begin{tabular}{ @ {} ccccccccc @ {} }
+                \toprule$Program Name$ & $Version$ & $Description$\\
+                \midrule
+                Wireshark& 4.4.2& Analyze traffic\\
+                Airport& 7.9.1& Capture traffic\\
+                JadX& 1.5.0& Dex to Java decompiler\\
+                Python& 3.12.7& GPL\\
+                ADB& 35.0.2& Android Debug Bridge\\
+                PCAPdroid& 1.7.5& Capture traffic on Andorid\\
+                KY UFO& 1.6.5& App flight control\\
+                Frida& 16.5.9& App debuggin\\
+                \bottomrule
+            \end{tabular}
+        }
+        \vspace{.5\baselineskip}
+    \end{minipage}
+\end{figure}

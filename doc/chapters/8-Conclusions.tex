@@ -1,0 +1,8 @@
+\section{Conclusions}
+In summary, our analysis reveals that the drone’s communication and software design exhibit significant security vulnerabilities. The communication between the remote controller and the drone is entirely unencrypted, leaving the protocol susceptible to eavesdropping and potential manipulation. Furthermore, the companion app available on the Play Store lacks any meaningful security measures.
+
+The app exposes a plethora of sensitive implementation details, including the explicit names of variables used in the code. Additionally, it contains numerous debug logs (Log.d() statements), which greatly simplify the reverse engineering process. These logs provide direct insights into the app's operations and further underscore the lack of attention to security during development.
+
+%% Moreover, our research indicates that the drone does not effectively utilize the control bits available in its communication packets. Altering the value of the XOR byte within the packet does not impact the drone's behavior, suggesting that the drone only evaluates the initial bytes of a packet to determine the command. This design flaw further diminishes the integrity of the protocol and leaves it vulnerable to unauthorized access or spoofing.
+
+These findings collectively highlight the drone's fragile security posture, making it an easy target for exploitation. This serves as a cautionary example of the critical importance of incorporating robust security practices in the development of IoT devices, especially those with wireless communication capabilities.

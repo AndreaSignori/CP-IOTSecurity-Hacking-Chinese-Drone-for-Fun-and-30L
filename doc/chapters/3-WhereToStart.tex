@@ -1,0 +1,14 @@
+\section{Exploration}
+Our exploration began with opening up the drone and experimenting with its functionality to understand how it operated. The drone is designed to work with a physical remote controller (RC) and also has a companion app available for both Android and iOS, called KY UFO available in both the Google Play Store and Apple Store.
+
+We started by powering on the drone without connecting it to any device. Observing its behavior, we noticed that it creates an open Wi-Fi access point with no password protection. This access point is discoverable by other devices and has a unique name (FLOW-UFO-843d1f). However, once a device, such as the RC or a smartphone, connects to the access point, the network disappears, effectively preventing any other devices from joining.
+
+Using the network manager on Windows, we were able to detect the Wi-Fi network and connect to it first, giving us an opportunity to analyze its properties. By doing this multiple times, we verified that the drone consistently operated on the same frequency band, which allowed us to focus our experiments on that specific band.
+
+Based on these observations, we decided to pursue two parallel approaches to further investigate the communication between the drone and the RC:
+\begin{enumerate}
+    \item \textbf{Sniffing the Connection}\\
+We conducted network sniffing on the drone's frequency band to capture the data packets exchanged between the drone and the connected device. This step allowed us to observe the raw communication data and infer patterns from the traffic.
+    \item \textbf{Reverse-Engineering the Application}\\
+We used \textit{Frida}, a powerful dynamic instrumentation toolkit, to intercept and analyze the methods executed by the companion app while the drone was in use. \textit{Frida} allows developers and researchers to hook into running processes on \textit{Android}.
+\end{enumerate}

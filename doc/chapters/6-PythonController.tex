@@ -1,0 +1,40 @@
+\section{Python controller}
+Our exploration proceeds by implementing a piece of code that simulates our RC so we can send some valid custom packet to the drone.
+
+Our controller has two main components:
+\begin{enumerate}
+    \item \textbf{Sender and reviver:} it deals with the transmission and the reception of messages between drone and RC.
+    \item \textbf{Heartbeat:} it sends every second the \textit{0101} bytes sequence. This is done putting in pause for one second a thread through the method \textit{time.sleep()}.
+
+\subsection*{Experiments}
+We perform a couple of simple experiments:
+\begin{enumerate}
+    \item send the command to take off and landing.
+    \item send a wrong command.
+\end{enumerate}
+Before starting the experiments we need to understand which messages are sent by the legitimate controller to take off and landing. From packet sniffing we came up with the the messages described by the following table.
+
+\begin{figure}[h]
+    \begin{minipage}{.48\textwidth}
+        \captionof{table}{Messages}
+        \label{tab:messages_used}
+        \scalebox{1}{
+            \begin{tabular}{ @ {} ccccccccc @ {} }
+                \toprule$Message$ & $Description$\\
+                \midrule
+                0366148080808001020...0399(1) & take off and landing \\
+                0366148080808000020...0299(2) & default controller status \\
+                \bottomrule
+            \end{tabular}
+        }
+        \vspace{.5\baselineskip}
+    \end{minipage}
+\end{figure}
+
+The message \textit{(2)} in Table \ref{tab:messages_used} is sent every times the operator doesn't interact with the RC.
+
+\subsection*{Key discovery}
+From the first experiment we discover that after every message sent we have to wait some times between them in order to gives times to drone to actuate the requested operation and need the same message several times.
+
+On the other hand, in case of a message with 20th bytes wrong the drone doesn't send us any kind of feedback, so it confirm the fact that the only communication, on port 7099, from drone to RC is the drone's heartbeat, as we hypothesized before.
+\end{enumerate}
