@@ -30,7 +30,7 @@ To get started with this repository:
 2. Navigate to the respective folders to explore the code, packet captures, or documentation.
 
 ## Requirements
-- Python 3.x for running the simulation scripts.
+- Python 3.12.7 for running the simulation scripts.
 - Wireshark or any other PCAP file analyzer for examining the sniffed data.
 - LaTeX distribution for recompiling the documentation (optional).
 
