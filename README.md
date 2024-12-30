@@ -1,6 +1,46 @@
-Welcome to the Cyberphysical and IoT Security Course Repository!
+# Drone Security and the Mysterious Case of DroneID - Adapted Project
 
-This repository contains all the materials and outcomes related to the first project of the Cyberphysical and IoT Security course. The project focuses on adapting and implementing key concepts from the paper "Drone Security and the Mysterious Case of DJI’s DroneID" in a practical scenario using a Chinese-manufactured drone.
+Welcome to the repository for the **first project of the CYBERPHYSICAL AND IoT SECURITY course (2024-2025)**. This project is an adaptation based on the research paper **"Drone Security and the Mysterious Case of DJI’s DroneID"**, implemented on a low-cost Chinese drone.
 
+## Project Overview
+The goal of this project is to explore and analyze drone communication security by reinterpreting the DroneID concept in a more accessible hardware platform. The work includes the development of a simulated Remote Controller (RC), network traffic analysis, and comprehensive documentation of the implementation process.
 
-Whether you're a fellow researcher, student, or simply interested in drone security, this repository provides a detailed look into the project outcomes
+## Repository Structure
+This repository is organized as follows:
+
+### `/src`
+Contains all the code developed for simulating the Remote Controller (RC). This includes:
+- Implementation of communication protocols.
+- Control and interaction logic for the drone.
+
+### `/pcap`
+Holds the packet capture (PCAP) files generated during the sniffing process. These files provide insights into the drone’s communication patterns and can be used for further analysis.
+
+### `/doc`
+This folder includes:
+- **LaTeX documentation**: Detailed write-up of the project, including methodology, findings, and references.
+- **Compiled PDF**: Ready-to-read version of the documentation for quick access.
+
+## Getting Started
+To get started with this repository:
+1. Clone the repository:  
+   ```bash
+   git clone https://github.com/yourusername/your-repo-name.git
+   ```
+2. Navigate to the respective folders to explore the code, packet captures, or documentation.
+
+## Requirements
+- Python 3.x for running the simulation scripts.
+- Wireshark or any other PCAP file analyzer for examining the sniffed data.
+- LaTeX distribution for recompiling the documentation (optional).
+
+## How to Contribute
+We welcome contributions to enhance this project. Feel free to submit pull requests or report issues in the repository’s issue tracker.
+
+## Acknowledgments
+Special thanks to the authors of the original paper **"Drone Security and the Mysterious Case of DJI’s DroneID"**, whose work served as the inspiration for this project.
+
+---
+
+For any questions or further information, please contact [Your Name/Team Name] at [Your Email Address].
+
