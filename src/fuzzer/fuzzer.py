@@ -57,8 +57,6 @@ if __name__ == "__main__":
         controller.send(takeoff_cmd)
         #time.sleep(0.5)
 
-    # aggiungere upper bound per il numero di messaggi
-
     while is_power_on or iter_num < MAX_ITERATIONS:
         fuzz_command = generate_rnd_command()
 
@@ -86,8 +84,11 @@ if __name__ == "__main__":
                 break
 
     # drone landing
-    for _ in range(10):
-        controller.send(landing_cmd)
-        #time.sleep(0.5)
-
-    controller.stop()
+    try:
+        for _ in range(10):
+            controller.send(landing_cmd)
+            #time.sleep(0.5)
+    except OSError:
+        pass
+    finally:
+        controller.stop()
