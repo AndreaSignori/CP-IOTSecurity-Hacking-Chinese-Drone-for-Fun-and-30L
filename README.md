@@ -42,5 +42,5 @@ Special thanks to the authors of the original paper **"Drone Security and the My
 
 ---
 
-For any questions or further information, please contact [Your Name/Team Name] at [Your Email Address].
+For any problem, pray god.
 
