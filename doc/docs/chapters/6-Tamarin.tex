@@ -1,0 +1,57 @@
+\section{Tamarin-Prover}
+This chapter presents the formal verification of the IoT Authentication Protocol using the Tamarin Prover, a powerful tool for modeling and analyzing cryptographic protocols. The goal is to ensure both authentication and session key secrecy in the implemented system.
+
+Tamarin Prover is designed to verify security protocols by modeling their message flows and analyzing properties such as secrecy and authentication. It uses multiset rewriting rules to represent protocol steps, allowing formal proofs of security guarantees. The protocol rules and the security properties are encoded in a formal language, as demonstrated in this chapter.
+
+Writing the entire protocol in Tamarin involves defining every aspect of the communication process in terms of multiset rewriting rules, facts, and lemmas. Each protocol step is modeled as a rule that consumes and produces facts, representing the states of the protocol participants and the messages exchanged. Fresh values, such as nonces and timestamps, are introduced to ensure security properties like freshness and uniqueness. Additionally, the adversary model is explicitly defined, allowing the prover to test the resilience of the protocol against a powerful attacker capable of intercepting, modifying, and replaying messages. By writing the protocol in this way, it becomes possible to formally verify authentication, key secrecy, and other crucial security properties under a rigorous adversarial model.
+
+The authentication system is modeled with four main protocol steps: client initiation, server response, client verification, and session key establishment. The implementation is expressed as multiset rewriting rules, defining how messages are exchanged and what conditions must be satisfied for a secure session.
+
+\subsection{Function Symbols}
+The following function symbols are defined to represent the essential elements of the protocol:
+\begin{itemize}
+    \item Device id and Session id : Unique identifiers for the device and the session;
+    \item c1, c2, r1, r2, t1, and t2 : Fresh nonces and timestamps used to ensure freshness and prevent replay attacks.
+    \item Session key : The key that will be established between the client and server.
+    \item xor op : A binary operation used to derive the session key from two contributions.
+    \item m1, m2, m3, m4 : Protocol messages exchanged between the client and server.
+\end{itemize}
+
+\subsection{Protocol Steps}
+\begin{enumerate}
+    \item Client Initiation (M1): 
+            \begin{itemize}
+                \item The client generates fresh values for device id and session id.
+                \item Sends message m1 containing these identifiers.
+            \end{itemize}
+    \item Server Response (M2):
+            \begin{itemize}
+                \item Upon receiving m1, the server generates fresh nonces c1 and r1.
+                \item Responds with message m2.
+            \end{itemize}
+   \item Client Verification and Response (M3):
+            \begin{itemize}
+                \item The client receives m2, generates new fresh values c2, t1, and r2.
+                \item Sends back m3 with these values.
+            \end{itemize}
+    \item Server Verification and Final Response (M4):
+            \begin{itemize}
+                \item The server verifies the values and generates a fresh timestamp t2.
+                \item Sends message m4 to complete the protocol.
+            \end{itemize}
+\end{enumerate}
+
+\subsection{Security Check}
+To verify the security guarantees of the protocol, two lemmas were defined:
+\begin{itemize}
+    \item Authentication Agreement: Ensures that if the server finalizes a response, then the client must have initiated the protocol and responded correctly.
+    \item Session Key Secrecy: Asserts that once the session key is established, it remains secret and cannot be revealed to an adversary.
+\end{itemize}
+The formal definitions of these properties in Tamarin guarantee that the protocol achieves mutual authentication and a secure key exchange, critical for IoT environments.
+
+The Tamarin model was executed to verify the specified lemmas. The verification confirmed that:
+\begin{itemize}
+    \item The protocol successfully enforces authentication, ensuring both the client and server agree on the session parameters.
+    \item The established session key remains secret under the defined adversarial model.
+\end{itemize}
+These results confirm that the IoT authentication system meets its security objectives, offering resilience against replay, impersonation, and key compromise attacks.

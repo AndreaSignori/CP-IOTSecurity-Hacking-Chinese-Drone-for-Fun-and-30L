@@ -1,0 +1,63 @@
+
+\usepackage[utf8]{inputenc}
+\usepackage[a4paper,
+            bindingoffset=0.2cm,
+            left=1cm,
+            right=1cm,
+            top=1cm,
+            bottom=2cm,
+            footskip=1cm]{geometry}
+
+\usepackage{lipsum}
+\usepackage[italian,english]{babel}
+
+\usepackage{graphicx} % Required to include images
+\usepackage[labelfont=sc]{caption} %DT$18/02/2021 caption style
+\usepackage{float} %DT$03/01/2020 better image positioning
+\usepackage{cuted} %DT$29/07/2022 allows writing over the whole page
+
+\usepackage{braket} % DT$13/11/2021 qm symbols
+\usepackage{enumerate} % Custom item numbers for enumerations
+\usepackage{placeins} %DT$04/01/2020 \FloatBarrier 
+\usepackage{color} % Required for custom colors
+\usepackage{amsmath,amsfonts,stmaryrd,amssymb,theorem} % Math packages
+\usepackage{siunitx} %DT$03/01/2021 symbols ex:\SI{50}{\micro\second}
+\sisetup{range-phrase={\text{\ -\ }},
+     input-decimal-markers={.}, 
+     range-units = single,
+     output-decimal-marker = {.},
+     group-digits=false}
+
+\usepackage{booktabs}
+
+\newcommand{\reffig}[1]{Figure~\ref{#1}}
+\newcommand{\reftab}[1]{Table~\ref{#1}}
+\newcommand{\refeqn}[1]{Equation~\ref{#1}}
+\NewDocumentCommand\mat{mmmm}{%
+\text{$\begin{pmatrix}#1 & #2\\#3 & #4\end{pmatrix}$}%
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% COMMENTS COLORS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{dsfont}
+\usepackage{xcolor}
+\usepackage{todonotes}
+\usepackage{ulem}
+\usepackage{listings}
+
+% global
+
+\definecolor{todoxcolor}{HTML}{11aa00}
+\newcommand{\todox}[2]{{\color{todoxcolor}\sout{#1}#2}}
+\renewcommand{\todox}[1]{\todo[color=todoxcolor!20, inline]{{\it TODO:} #1}}
+
+\definecolor{UniPDcolor}{HTML}{9B0014}
+\newcommand{\UniPD}[1]{\todo[color=UniPDcolor, inline]{{\color{white}{\it UniPD contribution:} #1}}}
+\newcommand{\todoUPD}[1]{\todo[color=UniPDcolor!20, inline]{{\it TODO UniPD:} #1}}
+
+
+% people
+
+\definecolor{fedecolor}{HTML}{FEDEBE}
+\definecolor{fedecolor2}{HTML}{ff7600}
+\newcommand{\fede}[2]{{\color{fedecolor2}{(Fede:\sout{#1} #2})}}
+\newcommand{\fedecom}[1]{\todo[color=fedecolor!40, inline]{{\it Fede:} #1}}

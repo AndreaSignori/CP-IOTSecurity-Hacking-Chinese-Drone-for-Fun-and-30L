@@ -1,0 +1,133 @@
+\section{Server}
+In this section, we want to describe how we decide to implement the authentication server. The server is divide in two components: \textbf{database and server logic}.
+
+In the Table \ref{tab:tools-table} shows the tools and package used during the server development.
+\begin{figure}[h]
+    \begin{minipage}{.48\textwidth}
+        \captionof{table}{Tools}
+        \label{tab:tools-table}
+        \scalebox{1}{
+            \begin{tabular}{ @ {} ccccccccc @ {} }
+                 \toprule$Tool Name$ & $Version$ & $$Description$\\
+                 \midrule
+                 Python&3.13.1&-\\
+                 numpy&2.2.2&efficient array operation\\
+                 pycryptodome&3.21.0&cryptography API\\
+                 SQLite&3&-\\
+                 \bottomrule
+            \end{tabular}
+        }
+        \vspace{.5\baselineskip}
+    \end{minipage}
+\end{figure}
+\subsection{Database}
+For the database we decided to use SQLite because is the lighter one.
+The purpose of this component is to store securely all secure vaults associated to every device deployed into the network.
+
+The database is very simple, indeed it has one simple table called \textit{devices} with two columns (see Table \ref{tab:devices-table})
+
+\begin{figure}[h]
+    \begin{minipage}{.48\textwidth}
+        \captionof{table}{Devices table structure}
+        \label{tab:devices-table}
+        \scalebox{1}{
+            \begin{tabular}{ @ {} ccccccccc @ {} }
+                 \toprule$Column Name$ & $Description$\\
+                 \midrule
+                 device\_ID&device identifier that should be unique\\
+                 secure\_vault&secure vault associated to specific device \\
+                 \bottomrule
+            \end{tabular}
+        }
+        \vspace{.5\baselineskip}
+    \end{minipage}
+\end{figure}
+As we can see from the Table \ref{tab:devices-table} the database contains some \textbf{secret} information needs to keep secure the entire authentication protocol. Such information is the secure vault; indeed, according to the paper, which describe the protocol, the secure vault is never sent over the network rather than the \textit{device\_ID} such is sent in clear at the first step of the protocol, so it isn't consider a sensitive information.
+To keep the secure vault secretly we decided to take the following countermeasures:
+\begin{enumerate}
+    \item we store in \textbf{encrypted from} the secure vault into the database, using a symmetric key algorithm(specifically AES), where the key is known only to the server;
+    \item we have to register \textbf{manually} the device identifier and the secure vault through a separated script form the authentication protocol called \textit{device\_registration.py} (see Listing \ref{lst:registration}).
+\end{enumerate}
+For simplicity, we hard-coded the key mention before because the goal of this implementation is to present a Proof-of-Work for the protocol. In real implementation, all private stuff should be stored in secure way.
+
+\begin{lstlisting}[language=SQL, basicstyle=\small, caption=SQLite table creation, label={lst:sql-table}]
+    CREATE TABLE IF NOT EXISTS devices (
+        device_ID VARCHAR(30) PRIMARY KEY,
+        secure_vault TEXT DEFAULT NULL
+    )
+\end{lstlisting}
+
+\begin{lstlisting}[language=Python, basicstyle=\small, label= {lst:registration}, caption=Device registration script]
+    DB_NAME = "data/devices.db"
+    # Define the regex pattern
+    pattern = r"^\d+(?:,\d+)*$"
+
+    manager = SVManager(DB_NAME)
+
+    print("IoT device registration platform!")
+
+    # input ID
+    id: str = input("Enter the device id: ")
+
+    # insert the device ID into the database
+    manager.insert_device(id)
+
+    while not bool(re.fullmatch(pattern, 
+    (sv := input("Enter the initial secure-vault: ")))):
+        # Error message
+
+    # insert the initial secure-vault value
+    manager.update_SV(id, sv)
+\end{lstlisting}
+
+\subsection{Server logic}
+In the server logic there isn't anything to say further than what it said into the reference paper. However, there is a couple of aspect that we want to discuss. First thing we decided to put a timeout of \textbf{1 second} between each message so the server is able autonomously to detect if something went wrong at client-side. We choose this amount of time because we think that it is a reasonable amount of time to do that (could be less). The second thing that we did, we are used json format to exchange the protocol messages instead of using the concatenation.
+
+In the listing \ref{lst:server} shows the steps done by the server during the authentication.
+
+\begin{lstlisting}[language=Python, basicstyle=\small, label={lst:server}, caption=Server logic]
+    class AuthenticationHandler
+        (socketserver.BaseRequestHandler):
+    def handle(self) -> None:
+        self.request.settimeout(TIMEOUT)
+        buffer: bytes = b''
+        helper: AuthHelper = AuthHelper()
+
+        try:
+            # STEP1: receiving M1 from IoT device
+            m1 = self.request.recv(1024)
+
+            device_ID: str = m1["device_ID"]
+            session_ID: str = m1["session_ID"]
+            
+            # STEP 1-2: verifying the deviceID
+            op_res = helper.set_vault(None, 
+                    device_ID.decode())
+
+            if not op_res.startswith("OK"):
+                return
+
+            # STEP 2: sends M2
+            m2 = helper.create_m2()
+            self.request.sendall(m2)
+
+            # STEP 3: receiving M3
+            m3 = self.request.recv(1024)
+
+            # STEP 3-4: verifying device's response
+            if helper.verify_device_response(m3):
+                # STEP 4: sends M4
+                m4 = helper.create_m4() 
+                self.request.sendall(m4)
+
+                # RECEIVING DATA
+                # ...
+                
+                helper.update_vault(buffer, 
+                    session_ID.decode())
+        except socket.timeout:
+            if not buffer == b'':
+                # STEP 6: secure vault update
+                helper.update_vault(buffer, 
+                                    device_ID)
+\end{lstlisting}

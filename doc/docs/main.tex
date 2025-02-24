@@ -1,0 +1,74 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% v1.0.0
+% lab-report-template
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[twocolumn]{article}
+
+% Include packages and document structure
+\include{style}
+\usepackage{listings}
+\usepackage{hyperref}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%               HEADER
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title{
+    \vspace{-1cm}
+    \includegraphics[height=2.5cm]{imgs/logo-math.png}
+    \hfill
+    \includegraphics[height=2.5cm]{imgs/logo-unipd.pdf}
+    \hfill
+    \includegraphics[height=2.5cm]{imgs/logo-cybersec.png}
+    \par
+    \vspace{1cm}
+    \textbf{Report for the Course on Cyber-Physical Systems and IoT Security}\\
+    Authentication of IoT Device and IoT Server Using Secure Vaults
+}
+
+\author{
+    Authors\\
+    {Andrea Signori - 2131195} \\
+    {Denis Gasparollo - 2104298} \\
+    {Riccardo Felisi - 2126813} 
+}
+
+\date{17 February 2025}
+
+
+% Document begin
+\begin{document}
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                 BODY
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Objectives
+\input{chapters/1-Objectives}
+
+%% Setup description
+\input{chapters/2-SetupDescription}
+
+%% Server
+\input{chapters/3-Server}
+
+%% Client
+\input{chapters/4-Client}
+
+%% Secure vault
+\input{chapters/5-Secure-vault}
+
+%% Tamarin
+\input{chapters/6-Tamarin}
+
+%% Conclusions
+\input{chapters/8-Conclusions}
+
+%% Example
+\clearpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%             BIBLIOGRAPHY
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\end{document}

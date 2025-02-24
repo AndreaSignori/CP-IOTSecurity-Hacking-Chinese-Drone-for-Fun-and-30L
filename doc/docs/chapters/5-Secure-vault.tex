@@ -1,0 +1,54 @@
+\section{Secure Vaults implementation}
+About the secure vault in the original paper it doesn't define very clearly how it is implemented. What we know from the paper are:
+\begin{itemize}
+    \item secure vault is a set of \textit{n keys} of \textit{m bits} each;
+    \item saved in secure way;
+    \item it is updated at the end of the session.
+\end{itemize}
+We implement a secure vault as an \textbf{array of integers}. On server side, the secure vault is stored in the database (see Listing \ref{lst:sql-table}), instead, on the client we save it in a file that simulates the memory, in both case the secure-vault is in encrypted form. We decided to encrypt it to ensure the confidentiality of the vault in case of memory dump or some vulnerabilities related to the database, even because the security of the protocol is based on keeping the vault secret.
+
+Regarding the update of the secure vault it isn't clearly specified in the original paper, so we implemented as follows:
+\begin{enumerate}
+    \item compute the HMAC of the actual secure vault value with a given key obtaining a string of \textit{k bits} (depending on the hash algorithm). Our key is the concatenation of the whole data sent during the session;
+    \item convert the key in binary;
+    \item applied a padding at the end to every key, adding an arbitrary number of zeros, if it is necessary, in order to get partition with dimension \textit{k bits} (even if the dimension of the key is greater than \textit{k bits}, the algorithm splits it in \textit{i} partition of \textit{k bits});
+    \item XORed each partition of the secure vault with the HMAC result;
+    \item  take the first \textit{m bits} of the XOR results
+\end{enumerate}
+The point \textit{2} of the update algorithm was necessary because we ensure that the vault to keep a dimension greater than one, otherwise, according to the paper, it is possible to predict the next password/vault configuration easily. 
+In Listing \ref{lst:sv-update} is shown the actual implementation
+
+The actual advantage of the update done in the aforementioned way is the fact that the two parts are always synchronize without sending each other any information about the secure-vault.
+
+% valutare se togliere
+\begin{lstlisting}[language=Python, basicstyle=\tiny, label= {lst:sv-update}, caption=Secure-vault update]
+def update(self, key: bytes) -> list:
+    h  = int(hmac.new(key, 
+        ",".join(map(str, self._sv)).encode(),
+        hashlib.sha512).digest().hex(), 16)
+    vault_partitions = self._compute_vault_partition()
+
+    self._sv = [int(bin(h ^ partition)[: self._m + 2], 2) 
+                        for partition in vault_partitions]
+
+    return self._sv
+
+def _compute_vault_partition(self) -> list:
+    bin_vault = [bin(key).replace("0b", "") for key in self._sv]
+
+    for i, bin_key in enumerate(bin_vault):
+        if (reminder := len(bin_key) % PARTITION_DIM) != 0:
+            bin_vault[i] = padding(bin_key, len(bin_key) +
+                               (PARTITION_DIM - reminder))
+
+    # check if all key has dimension PARTITION_DIM
+    for i, key in enumerate(bin_vault):
+        if len(key) > PARTITION_DIM:
+            bin_vault.pop(i)
+
+            bin_vault = bin_vault + [key[(start := i * 
+                        PARTITION_DIM): start + PARTITION_DIM]
+                        for i in range(len(key) // PARTITION_DIM)]
+
+    return [int(f"0b{bin_key}", 2) for bin_key in bin_vault]
+\end{lstlisting}
